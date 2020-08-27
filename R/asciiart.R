@@ -39,7 +39,15 @@ asciiart <- function(file,
   # Extract dimensions of image
   dim_y <- dim(raw)[1]
   dim_x <- dim(raw)[2]
-  channels <- dim(raw)[3]
+
+  # Convert image to greyscale vector
+  # If it's rgb, average first
+  if(length(dim(raw)) == 3){
+    # If three dimensions, average r, g and b
+    g <- rowMeans(raw, dims=2) %>% as.vector()
+  } else if(length(dim(raw)) == 2){
+    g <- as.vector(raw)
+  }
 
   # Create aspect ratio
   asp <- dim_y/dim_x
@@ -51,7 +59,7 @@ asciiart <- function(file,
   # Compute dataframe
   d <-
     expand.grid(y = dim_y:1, x = 1:dim_x) %>%
-    dplyr::mutate(g = rowMeans(raw, dims=2) %>% as.vector()) %>%
+    dplyr::mutate(g = g) %>%
     dplyr::mutate(xbin = cut(x, width, labels = FALSE, include.lowest = T),
                   ybin = cut(y, height, labels = FALSE, include.lowest = T)) %>%
     dplyr::group_by(xbin, ybin) %>%
