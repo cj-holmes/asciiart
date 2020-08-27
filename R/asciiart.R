@@ -1,13 +1,20 @@
 #' Create asciiart image
 #'
+#' Creates an ASCII-art/text-art image where pixel intensity is mapped to the density of character glyphs
+#'
+#' A uniform grid image can be written to a device (png, pdf etc...) and an approximation of the same image
+#' can be printed to the console (or the output of calling \code{asciiart()} could be written to a text
+#' file with \code{readr::write_lines()}). The text written to the console by setting \code{print_text = TRUE} will not
+#' maintain the exact same aspect ratio as the original image
+#'
 #' @param file Path to image file or array returned from \code{jpeg::readJPEG(), png::read_PNG()}
-#' @param width Width of output image in text characters
+#' @param width Width of output image in text characters. Use NA for original image width
 #' @param text_scaling Text scaling factor for tweaking text size (default = 1)
 #' @param out_width Output image width in inches
 #' @param out_name File path including name for saved image
 #' @param chars Character vector set for ascii art (ordered from dark to light)
 #' @param text_col Colour of text (default = "black")
-#' @param return_text Logical. Should the text making the picture by printed to the console?
+#' @param print_text Logical. Should the text making the picture by printed to the console?
 #'   This is hacky, every other row is removed from the image to roughly correct for vertical stretching. This
 #'   text output will not have the same aspect ratio as the original image
 #'
@@ -19,7 +26,7 @@ asciiart <- function(file,
                      out_name = NULL,
                      text_col = "black",
                      chars = c("@","%","#","*","+","=","-",":","."," "),
-                     return_text = FALSE
+                     print_text = FALSE
                      ){
 
   if(is.matrix(file) | is.array(file)){
@@ -38,6 +45,7 @@ asciiart <- function(file,
   asp <- dim_y/dim_x
 
   # Compute height in text characters that maintains original aspect
+  if(is.na(width)){width <- dim_x}
   height <- asp * width
 
   # Compute dataframe
@@ -68,7 +76,7 @@ asciiart <- function(file,
 
   # Write text file of ascii art
   # TODO
-  if(return_text){
+  if(print_text){
     t <-
       d %>%
       # Filter every other row to stop vertical stretching in text
