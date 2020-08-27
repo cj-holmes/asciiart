@@ -11,7 +11,8 @@ asciiart(
   out_width = 8,
   out_name = NULL,
   text_col = "black",
-  chars = c("@", "\%", "#", "*", "+", "=", "-", ":", ".", " ")
+  chars = c("@", "\%", "#", "*", "+", "=", "-", ":", ".", " "),
+  return_text = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ asciiart(
 \item{text_col}{Colour of text (default = "black")}
 
 \item{chars}{Character vector set for ascii art (ordered from dark to light)}
+
+\item{return_text}{Logical. Should the text making the picture by printed to the console?
+This is hacky, every other row is removed from the image to roughly correct for vertical stretching. This
+text output will not have the same aspect ratio as the original image}
 }
 \description{
 Create asciiart image

@@ -7,6 +7,9 @@
 #' @param out_name File path including name for saved image
 #' @param chars Character vector set for ascii art (ordered from dark to light)
 #' @param text_col Colour of text (default = "black")
+#' @param return_text Logical. Should the text making the picture by printed to the console?
+#'   This is hacky, every other row is removed from the image to roughly correct for vertical stretching. This
+#'   text output will not have the same aspect ratio as the original image
 #'
 #' @export
 asciiart <- function(file,
@@ -15,7 +18,8 @@ asciiart <- function(file,
                      out_width = 8,
                      out_name = NULL,
                      text_col = "black",
-                     chars = c("@","%","#","*","+","=","-",":","."," ")
+                     chars = c("@","%","#","*","+","=","-",":","."," "),
+                     return_text = FALSE
                      ){
 
   if(is.matrix(file) | is.array(file)){
@@ -64,13 +68,19 @@ asciiart <- function(file,
 
   # Write text file of ascii art
   # TODO
-  # d %>%
-  #   dplyr::arrange(desc(ybin), xbin) %>%
-  #   dplyr::group_by(ybin) %>%
-  #   dplyr::summarise(line = paste0(char, collapse=""), .groups="drop") %>%
-  #   dplyr::arrange(desc(ybin)) %>%
-  #   dplyr::pull(line) %>%
-  #   readr::write_lines("")
+  if(return_text){
+    t <-
+      d %>%
+      # Filter every other row to stop vertical stretching in text
+      # This is a hack and not precise (so text output does not have exactly the same aspect as original)
+      dplyr::filter(!ybin %% 2 == 0) %>%
+      dplyr::arrange(desc(ybin), xbin) %>%
+      dplyr::group_by(ybin) %>%
+      dplyr::summarise(line = paste0(char, collapse=""), .groups="drop") %>%
+      dplyr::arrange(desc(ybin)) %>%
+      dplyr::pull(line)
 
+    return(t)
+  }
 
   }
